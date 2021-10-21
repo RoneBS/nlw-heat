@@ -1,50 +1,47 @@
+import { useEffect, useState } from 'react'
+import { api } from '../../services/api'
+
 import * as S from './styles'
 
 import logoImg from '../../assets/logo.svg'
 
+type Message = {
+  id: string;
+  text: string;
+  user: {
+    name: string;
+    avatar_url: string;
+  }
+}
+
 export const MessageList = () => {
+  const [messages, setMessages] = useState<Message[]>([])
+
+  useEffect(() => {
+    api.get<Message[]>('messages/last3').then(response => {
+      setMessages(response.data)
+    })
+  },[])
+
   return(
     <S.MessageListWrapper>
       <img src={logoImg} alt="DoWhile 2021" />
       <S.MessageList>
-        <S.Message>
-          <S.MessageContent>
-            Não vejo a hora de começar esse evento, com certeza vai ser o melhor
-            de todos os tempos, vamooo pra cima! 🔥🔥
-          </S.MessageContent>
-          <S.MessageUser>
-            <S.UserImage>
-              <img src="https://github.com/RoneBS.png" alt="Rone Silveira" />
-            </S.UserImage>
-            <span>Rone Silveira</span>
-          </S.MessageUser>
-        </S.Message>
-
-        <S.Message>
-          <S.MessageContent>
-            Não vejo a hora de começar esse evento, com certeza vai ser o melhor
-            de todos os tempos, vamooo pra cima! 🔥🔥
-          </S.MessageContent>
-          <S.MessageUser>
-            <S.UserImage>
-              <img src="https://github.com/RoneBS.png" alt="Rone Silveira" />
-            </S.UserImage>
-            <span>Rone Silveira</span>
-          </S.MessageUser>
-        </S.Message>
-
-        <S.Message>
-          <S.MessageContent>
-            Não vejo a hora de começar esse evento, com certeza vai ser o melhor
-            de todos os tempos, vamooo pra cima! 🔥🔥
-          </S.MessageContent>
-          <S.MessageUser>
-            <S.UserImage>
-              <img src="https://github.com/RoneBS.png" alt="Rone Silveira" />
-            </S.UserImage>
-            <span>Rone Silveira</span>
-          </S.MessageUser>
-        </S.Message>
+        {messages.map(message => (
+           <S.Message key={message.id}>
+            <S.MessageContent>
+              {message.text}
+            </S.MessageContent>
+            <S.MessageUser>
+              <S.UserImage>
+                <img src={message.user.avatar_url} alt={message.user.name} />
+              </S.UserImage>
+              <span>{message.user.name}</span>
+            </S.MessageUser>
+         </S.Message>
+        ))
+         
+        }
       </S.MessageList>
       
     </S.MessageListWrapper>
