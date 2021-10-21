@@ -1,7 +1,11 @@
+import * as S from './App.styles'
 
 export function App() {
   return (
-   <h1>Hello World</h1>
+    <S.ContentWrapper>
+      <h1>Hello World</h1>
+    </S.ContentWrapper>
+   
   )
 }
 
