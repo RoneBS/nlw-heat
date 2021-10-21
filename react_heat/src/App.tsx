@@ -1,9 +1,12 @@
 import * as S from './App.styles'
+import { LoginBox } from './components/LoginBox'
+import { MessageList } from './components/MessageList'
 
 export function App() {
   return (
     <S.ContentWrapper>
-      <h1>Hello World</h1>
+      <MessageList />
+      <LoginBox />
     </S.ContentWrapper>
    
   )
