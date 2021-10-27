@@ -1,23 +1,43 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView } from 'react-native'
 import { api } from '../../services/api'
+import { io}  from 'socket.io-client'
+
+import { MESSAGES_EXAMPLE } from '../../utils/messages'
 
 import { Message, MessageProps } from '../Message'
 
 import { styles } from './styles'
 
+let messagesQueuee: MessageProps[] = MESSAGES_EXAMPLE
 
+const socket = io(String(api.defaults.baseURL))
+socket.on('new_message', (newMessage) => {
+  messagesQueuee.push(newMessage)
+  console.log(newMessage)
+})
 
 export function MessageList() {
   const [currentMessages, setCurrentMessages] = useState<MessageProps[]>([])
 
 useEffect(() => {
   async function fetchMessages(){
-    const messagesResponse = await api.get<MessageProps[]>('messages/last3')
+    const messagesResponse = await api.get<MessageProps[]>('/messages/last3')
     setCurrentMessages(messagesResponse.data)
   }
 
   fetchMessages()
+}, [])
+
+useEffect(() => {
+  const timer = setInterval(() => {
+    if(messagesQueuee.length > 0){
+      setCurrentMessages(prevState => [messagesQueuee[0], prevState[0], prevState[1]])
+      messagesQueuee.shift()
+    }
+  }, 3000)
+
+  return () => clearInterval(timer)
 }, [])
 
   return (
@@ -26,7 +46,7 @@ useEffect(() => {
       contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="never"
       >
-      {currentMessages.map((message) => <Message key={message.id} data={message}/>)}
+      {currentMessages.map((message) => <Message key={message.id} data={message} />)}
       
     </ScrollView>
   )
