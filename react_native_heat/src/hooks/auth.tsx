@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState } from 'react'
 import * as AuthSessions from 'expo-auth-session'
 
+import { api } from '../services/api'
+
 
 const CLIENT_ID = 'cc5e74fd39ecd366b496'
 const SCOPE = 'read:user'
@@ -14,7 +16,7 @@ type User = {
 
 type AuthContextData = {
   user: User | null;
-  isSigningIng: boolean;
+  isSigningIn: boolean;
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -37,15 +39,21 @@ type AuthorizationResponse = {
 export const AuthContext = createContext({} as AuthContextData);
 
 function AuthProvider({ children }: AuthProviderProps) {
-  const [isSigningIng, setIsSigningIng] = useState(false)
-  const [user, setUser] = useState<User | null>(null)
-
-  
+  const [isSigningIn, setIsSigningIn] = useState(false)
+  const [user, setUser] = useState<User | null>(null)  
 
   async function signIn(){
+    setIsSigningIn(true)
     const authUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=${SCOPE}`
-    const { params } = await AuthSessions.startAsync({ authUrl }) as AuthorizationResponse
+    const { params } = await AuthSessions.startAsync({ authUrl }) as AuthorizationResponse;
     console.log(params)
+
+    if (params && params.code){
+      const authResponse = await api.post('/authenticate', { code: params.code })
+      const { user, token } = authResponse.data as AuthResponse
+    }
+
+    setIsSigningIn(false)
   }
 
   async function signOut(){
@@ -57,7 +65,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       signIn,
       signOut,
       user,
-      isSigningIng
+      isSigningIn
     }}>
       {children}
     </AuthContext.Provider>

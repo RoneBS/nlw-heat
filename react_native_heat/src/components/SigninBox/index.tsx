@@ -9,7 +9,7 @@ import { styles } from './styles'
 
 export function SigninBox() {
   const { signIn } = useAuth();
-  
+
   return(
     <View style={styles.container}>
       <Button
@@ -17,6 +17,7 @@ export function SigninBox() {
          color={COLORS.BLACK_PRIMARY}
          backgroundColor={COLORS.YELLOW}
          icon="github"
+         onPress={signIn}
       />
     </View>
   )

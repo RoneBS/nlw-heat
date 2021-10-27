@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "react_native_heat",
-    "slug": "react_native_heat",
+    "name": "react-native-heat",
+    "slug": "react-native-heat",
     "version": "1.0.0",
-    "scheme": "react_native_heat",
+    "scheme": "react-native-heat",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
